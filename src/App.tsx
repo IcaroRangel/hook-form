@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { Container } from "./styles";
 
 interface User {
   name: string;
@@ -17,15 +18,17 @@ let schema = yup.object().shape({
   age: yup
     .number()
     .required("Idade é obrigatório")
-    .positive("Idade miníma de 1 ano")
-    .integer("Idade deve ser um número inteiro"),
-  email: yup.string().required("Email obrigátorio"),
-  address: yup.string(),
+    .positive("Idade miníma de 1 ano"),
+  email: yup
+    .string()
+    .required("Email obrigátorio")
+    .email("Envie um formato válido de email"),
+  address: yup.string().required("Endereço obrigátorio"),
   cpf: yup
     .string()
-    .length(11, "CPF deve ter 11 digítos")
-    .required("CPF obrigatório"),
-  marytalState: yup.string(),
+    .required("CPF obrigatório")
+    .length(11, "CPF deve ter 11 digítos"),
+  marytalState: yup.string().ensure().required("Selecione o seu estado civil"),
 });
 
 const App: React.FC = () => {
@@ -54,8 +57,8 @@ const App: React.FC = () => {
 
   return (
     <>
-      <h1>Dados</h1>
-      <div>
+      <h1>Informe os dados</h1>
+      <Container>
         <form onSubmit={handleSubmit(onSubmit)}>
           <input {...register("name")} type="text" placeholder="Nome"></input>
           {errors.name && <span>{errors.name.message}</span>}
@@ -63,7 +66,7 @@ const App: React.FC = () => {
             {...register("age")}
             type="number"
             placeholder="Idade"
-            defaultValue="1"
+            defaultValue="0"
           ></input>
           {errors.age && <span>{errors.age.message}</span>}
           <input {...register("email")} type="text" placeholder="Email"></input>
@@ -81,19 +84,20 @@ const App: React.FC = () => {
             placeholder="CPF"
           ></input>
           {errors.cpf && <span>{errors.cpf.message}</span>}
-          <span>
-            <label>Estado Civil</label>
-            <select {...register("marytalState")}>
-              <option>Casado</option>
-              <option>Solteiro</option>
-              <option>Viúvo</option>
-              <option>Divorciado</option>
-            </select>
-          </span>
+          <label>Estado Civil</label>
+          <select {...register("marytalState")}>
+            <option value="" disabled selected>
+              Selecione
+            </option>
+            <option>Casado</option>
+            <option>Solteiro</option>
+            <option>Viúvo</option>
+            <option>Divorciado</option>
+          </select>
           {errors.marytalState && <span>{errors.marytalState.message}</span>}
           <button type="submit">Enviar</button>
         </form>
-      </div>
+      </Container>
     </>
   );
 };
